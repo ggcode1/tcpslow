@@ -1,9 +1,9 @@
-##Creates a TCP or unix domain socket proxy that (optionally) delays packets.
+## Creates a TCP or unix domain socket proxy that (optionally) delays packets.
 
-#Install
+# Install
 npm install -g tcpslow
 
-##Usage
+## Usage
 
 For example, to create a proxy listening on port 1522 to tcp port 1521, with 150 milliseconds of delay, you could run:
  
@@ -14,7 +14,7 @@ Delay is optional. If ommitted, data are send as fast as possible.
 
 Unix domain sockets are also supported, use -L or -F with a path as the argument. Unix domain sockets are sockets that are represented as files in the file system. They allow for exchanging data between processes executing within the same host operating system (e.g., not over a network).
 
-##Examples
+## Examples
 ```tcpslow.js -l 9002 -f 9000```
 
 Listen on TCP port 9002 and forward to TCP port 9000.
