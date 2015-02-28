@@ -1,50 +1,68 @@
+#!/usr/bin/env node
+
+var program = require('commander');
+var package = require('./package.json');
+
+program
+.version(package.version)
+.description('Delay packets')
+.option('-l, --listen [port]', 'TCP port to listen on', parseInt)
+.option('-f, --forward [port]', 'TCP port to forward to', parseInt)
+.option('-L, --listenuds [filename]', 'Unix domain socket to listen to')
+.option('-F, --forwarduds [filename]', 'Unix domain socket to forward to')
+.option('-d, --delay [ms]', 'Milliseconds to delay', parseInt)
+.option('-h, --host [hostname]', 'Hostname of remote')
+.option('-v, --verbose', 'Log connection events')
+.option('-p, --packet', 'Log data transmitted')
+.option('-s, --sending', 'delay packet sending in addition to receiving', false)
+.parse(process.argv);
+
+// if (!(program.listen || program.listenuds)) {
+//   program.help();
+// }
+
+// if (!(program.forward || program.forwarduds)) {
+//   program.help();
+// }
+
 var net = require('net');
 var chalk = require('chalk');
 
-var argv = require('minimist')(process.argv.slice(2));
-
-var listenPort = argv.l || 5104;
-var forward = argv.f || 1521;
-var delay = argv.d || 150;
-var remotehost = argv.r;
-var bothways = argv.b;
-var log = argv.v;
-var verbose = argv.vv;
 
 var conn = {};
-conn.port = forward;
-if (remotehost)
-  conn.host = remotehost;
+conn.port = program.forward;
+if (program.host)
+  conn.host = program.host;
 
 var server = net.createServer(function(listen) {
   var forward;
 
   forward = net.createConnection(conn);
   forward.on('connect', function() {
-    if (log) console.log(new Date() + ' Client connected.');
+    if (program.verbose) console.log(new Date() + ' Client connected.');
   });
   forward.on('data', function(data) {
-    if (verbose) console.log(chalk.red(data))
+    if (program.packet) console.log(chalk.red(data))
     setTimeout(function() {
       listen.write(data);
-    }, delay);
+    }, program.delay);
   });
   forward.on('error', function(err) {
     console.error(err);
   });
   forward.on('end', function() {
-    if (log) console.log(new Date() + ' Client disconnected.');
+    if (program.verbose) console.log(new Date() + ' Client disconnected.');
   });
 
   listen.on('data', function(data) {
-    if (bothways) {
+    if (program.sending) {
       setTimeout(function() {
         forward.write(data);
-      }, delay);
+      }, program.delay);
     } else {
       forward.write(data);
     }
-    if (verbose) console.log(chalk.blue(data));
+    if (program.packet) console.log(chalk.blue(data));
   });
   listen.on('end', function() {
     if (log) console.log(new Date() + ' Socket end.');
@@ -52,15 +70,15 @@ var server = net.createServer(function(listen) {
     listen.end();
   });
   listen.on('error', function(err) {
-    if (log) console.log(new Date() + ' ' + err);
+    if (program.verbose) console.log(new Date() + ' ' + err);
   });
 
 });
 
-server.listen(listenPort, function() {
-  console.log('tcpslow listening on port ' + listenPort + ' relaying to' +
-    (remotehost ? +' ' + remotehost : '') + ' port ' + forward +
+server.listen(program.listen, function() {
+  console.log('tcpslow listening on port ' + program.listen + ' relaying to' +
+    (program.host ? +' ' + program.host : '') + ' port ' + program.forward +
     ' delaying by ' +
-    delay +
-    'ms' + (bothways ? ' in both directions ' : ' on receive'));
+    program.delay +
+    'ms' + (program.sending ? ' in both directions ' : ' on receive'));
 });
