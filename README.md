@@ -10,3 +10,6 @@ For example, to create a proxy listening on port 1522 to tcp port 1521, with 150
 ```tcpslow -l 1522 -f 1521 -d 150```
 
 
+Delay is optional. If ommitted, data are send as fast as possible.
+
+Unix domain sockets are also supported, use -L or -F with a path as the argument.
