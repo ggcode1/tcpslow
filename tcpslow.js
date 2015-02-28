@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 'use strict';
 
+var net = require('net');
+var chalk = require('chalk');
+var path = require('path');
 var program = require('commander');
 var packagejson = require('./package.json');
 
@@ -51,10 +54,6 @@ if (program.forwarduds) {
 if (program.listenuds) {
   program.listenuds = path.normalize(program.listenuds);
 }
-
-var net = require('net');
-var chalk = require('chalk');
-var path = require('path');
 
 function createConnection() {
   var conn;
