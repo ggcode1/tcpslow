@@ -73,12 +73,20 @@ function createConnection() {
   }
 }
 
+function logSocketStatus(status, socket) {
+  if (program.verbose) {
+    console.log(new Date () + ' local: ' + socket.localAddress + ':' + socket.localPort
+     + ' remote: ' + socket.remoteAddress + ':' + socket.remotePort + ' | ' + status);
+  }
+}
+
 var server = net.createServer(function(listen) {
-  if (program.verbose) console.log(new Date() + ' (listening) client connected ');
+  logSocketStatus('(listening) client connected', listen);
 
   listen.forward = createConnection();
   listen.forward.on('connect', function() {
-    if (program.verbose) console.log(new Date() + ' (forwarding) client connected.');
+    // if (program.verbose) console.log(new Date() + ' (forwarding) client connected.');
+    logSocketStatus('(forwarding) client connected.', listen.forward);
   });
   listen.forward.on('data', function(data) {
     if (program.packet) console.log(chalk.red(data))
@@ -87,15 +95,18 @@ var server = net.createServer(function(listen) {
       }, program.delay);
   });
   listen.forward.on('error', function(err) {
-    if (program.verbose) console.log(new Date() + ' (forwarding) error ' + err);
+    // if (program.verbose) console.log(new Date() + ' (forwarding) error ' + err);
+    logSocketStatus('(forwarding) error ' + err, listen.forward);
     listen.destroy();
   });
   listen.forward.on('end', function() {
-    if (program.verbose) console.log(new Date() + ' (forwarding) client end.');
+    // if (program.verbose) console.log(new Date() + ' (forwarding) client end.');
+    logSocketStatus('(forwarding) end ' , listen.forward);
     listen.end();
   });
-  listen.forward.on('close', function() {
-    if (program.verbose) console.log(new Date() + ' (forwarding) client close.');
+  listen.forward.on('close', function(closed) {
+    // if (program.verbose) console.log(new Date() + ' (forwarding) client close.');
+    logSocketStatus('(forwarding) close ' , listen.forward);
     listen.end();
   })
 
@@ -110,17 +121,20 @@ var server = net.createServer(function(listen) {
     if (program.packet) console.log(chalk.blue(data));
   });
   listen.on('end', function() {
-    if (program.verbose) console.log(new Date() + ' (listening) socket end.');
+    // if (program.verbose) console.log(new Date() + ' (listening) socket end.');
+    logSocketStatus(' (listening) end ' , listen);
     listen.forward.end();
     listen.end();
   });
   listen.on('error', function(err) {
-    if (program.verbose) console.log(new Date() + ' (listening) error: ' + err);
+    // if (program.verbose) console.log(new Date() + ' (listening) error: ' + err);
+    logSocketStatus(' (listening) error ' , listen);
     listen.forward.destroy();
   });
   listen.on('close', function() {
-    var args = Array.prototype.slice.call(arguments);
-    if (program.verbose) console.log(new Date() + ' (listening) close: ' + args);
+    // var args = Array.prototype.slice.call(arguments);
+    logSocketStatus(' (listening) close ' , listen);  
+    // if (program.verbose) console.log(new Date() + ' (listening) close: ' + args);
     listen.forward.end();
   });
 });
