@@ -1,6 +1,6 @@
 {
   "name": "tcpslow",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Create a TCP proxy that delays packets.",
   "main": "tcpslow.js",
   "scripts": {
