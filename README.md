@@ -16,7 +16,7 @@ npm install -g tcpslow
 
 ## Usage
 
-For example, to create a proxy listening on port 1522 to tcp port 1521, with 150 milliseconds of delay, you could run:
+For example, to create a proxy listening on TCP port 1522, forwarding to TCP port 1521, with 150 milliseconds of delay, you could run:
  
 ```tcpslow -l 1522 -f 1521 -d 150```
 
