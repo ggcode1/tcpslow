@@ -1,6 +1,8 @@
 #!/usr/bin/env node
-
 'use strict';
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 var net = require('net');
 var chalk = require('chalk');
@@ -137,6 +139,14 @@ var server = net.createServer(function(listen) {
         // if (program.verbose) console.log(new Date() + ' (listening) close: ' + args);
         listen.forward.end();
     });
+
+    if (program.faultinjection) {
+        setInterval(function () {
+            if (listen.forward) {
+                listen.forward.destroy();
+            }
+        }, 0);
+    }
 });
 
 server.listen(program.listen ? program.listen : program.listenuds, function() {
