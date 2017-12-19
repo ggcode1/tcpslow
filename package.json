@@ -11,7 +11,7 @@
     "url": "https://github.com/llambda/tcpslow.git"
   },
   "files": [
-      "tcpslow.js"
+    "tcpslow.js"
   ],
   "keywords": [
     "tcp",
@@ -28,8 +28,8 @@
   },
   "homepage": "https://github.com/llambda/tcpslow",
   "dependencies": {
-    "chalk": "^1.1.1",
-    "commander": "^2.9.0"
+    "chalk": "^2.3.0",
+    "commander": "^2.12.2"
   },
   "bin": {
     "tcpslow": "./tcpslow.js"
