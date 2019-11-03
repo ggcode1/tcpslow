@@ -28,8 +28,8 @@
   },
   "homepage": "https://github.com/llambda/tcpslow",
   "dependencies": {
-    "chalk": "^2.3.0",
-    "commander": "^2.12.2"
+    "chalk": "^2.4.2",
+    "commander": "^4.0.0"
   },
   "bin": {
     "tcpslow": "./tcpslow.js"
